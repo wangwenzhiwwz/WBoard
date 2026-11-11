@@ -55,7 +55,7 @@ const render=o=>{
  if(o.type==='rect'||o.type==='ellipse'){el.classList.add('shape',o.type);el.style.width=o.w+'px';el.style.height=o.h+'px'}
  if(o.type==='arrow'){el.classList.add('line','arrow');el.style.width=o.w+'px';el.style.transform=`rotate(${o.angle}rad)`}
  if(o.type==='line'){el.classList.add('line');el.style.width=o.w+'px';el.style.transform=`rotate(${o.angle}rad)`}
- if(!['note','text','image'].includes(o.type))el.style.pointerEvents='none';
+ 
  itemsEl.append(el);
 };
 const add=o=>{snapshot();objects.push(o);render(o);$('#empty').style.display='none';save()};
@@ -67,7 +67,7 @@ workspace.addEventListener('pointerdown',e=>{
  const p=point(e),el=e.target.closest('.item');
  if(tool==='hand'||e.button===1){drag={kind:'pan',sx:e.clientX,sy:e.clientY,tx,ty};workspace.setPointerCapture(e.pointerId);return}
  if(tool==='select'&&!el){select(null);return}
- if(tool==='select'&&el){select(el.dataset.id);const o=objects.find(x=>x.id===selected);if(o){drag={kind:'move',id:o.id,sx:p.x,sy:p.y,x:o.x,y:o.y};workspace.setPointerCapture(e.pointerId)}return}
+ if(tool==='select'&&el){select(el.dataset.id);const o=objects.find(x=>x.id===selected);if(o){snapshot();drag={kind:'move',id:o.id,sx:p.x,sy:p.y,x:o.x,y:o.y};workspace.setPointerCapture(e.pointerId)}return}
  if(tool==='delete'&&el){snapshot();objects=objects.filter(o=>o.id!==el.dataset.id);restore();return}
  if(tool==='pen'){penPath={id:uid(),type:'path',d:`M ${p.x} ${p.y}`};snapshot();objects.push(penPath);render(penPath);workspace.setPointerCapture(e.pointerId);return}
  if(['note','text'].includes(tool)){const o={id:uid(),type:tool,x:p.x,y:p.y,text:tool==='note'?'双击编辑便签':'输入文字',color:tool==='note'?'yellow':'#252525'};add(o);select(o.id);const node=itemsEl.querySelector(`[data-id="${o.id}"]`);if(node){node.focus();document.execCommand('selectAll',false,null)}return}
